@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wijaya AC Solutions</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    .fade-in { animation: fadeIn 0.5s ease-in-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-blue-50 text-slate-800 font-sans min-h-screen relative pb-16">
+
+  <nav class="bg-blue-700 text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <div class="bg-white/20 p-2 rounded-lg backdrop-blur-sm"><i class="fa-solid fa-snowflake text-2xl text-cyan-300 animate-pulse"></i></div>
+        <span class="font-extrabold text-xl tracking-wide">Wijaya AC</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="https://wa.me/6281905083644?text=Halo%20Wijaya%20AC%20Solutions,%20saya%20ingin%20bertanya%20seputar%20layanan" target="_blank" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded-full text-xs font-bold transition flex items-center gap-1">
+          <i class="fa-brands fa-whatsapp text-sm"></i> CS WA
+        </a>
+        <div id="navAuthArea">
+          <button type="button" onclick="toggleModal('authModal')" class="bg-white/10 hover:bg-white/20 border border-white/30 px-4 py-2 rounded-full text-sm font-semibold transition flex items-center gap-2 cursor-pointer">
+            <i class="fa-solid fa-right-to-bracket"></i> Login / Daftar
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-5xl mx-auto px-4 py-10 fade-in">
+    <div id="heroSection" class="text-center mb-10">
+      <span class="bg-blue-100 text-blue-800 text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wider shadow-sm">Jasa Spesialis AC #1</span>
+      <h1 class="text-3xl md:text-5xl font-extrabold text-slate-900 mt-6 mb-4 leading-tight">Solusi Cepat untuk <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500">AC Dingin & Sehat</span></h1>
+      <p class="text-slate-600 text-lg max-w-2xl mx-auto">Pesan teknisi profesional kami dengan harga transparan sesuai waktu luang Anda. Tanpa ribet, tanpa antre.</p>
+    </div>
+
+    <div id="guestNotice" class="bg-amber-50 border border-amber-200 rounded-3xl p-8 text-center max-w-4xl mx-auto shadow-md mb-8">
+      <div class="inline-block bg-amber-100 p-4 rounded-full text-amber-600 mb-3"><i class="fa-solid fa-lock text-3xl"></i></div>
+      <h3 class="text-xl font-bold text-slate-800 mb-2">Pemesanan Terkunci</h3>
+      <p class="text-slate-600 text-sm mb-6">Anda harus Login atau Daftar Akun Baru terlebih dahulu untuk mengisi form order jasa AC.</p>
+      <button type="button" onclick="toggleModal('authModal')" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold text-sm shadow-lg transition cursor-pointer">
+        <i class="fa-solid fa-user-plus me-1"></i> Login / Daftar Sekarang
+      </button>
+    </div>
+
+    <div id="bookingSection" class="hidden bg-white rounded-3xl shadow-2xl p-6 md:p-10 border border-slate-100 max-w-4xl mx-auto relative overflow-hidden">
+      <div class="flex justify-between items-center mb-8 border-b pb-4">
+        <h2 class="text-2xl font-extrabold text-blue-900 flex items-center gap-3">
+          <span class="bg-blue-100 p-2 rounded-lg text-blue-600"><i class="fa-solid fa-calendar-check"></i></span>
+          Form Pemesanan Layanan
+        </h2>
+        <span id="userBadge" class="bg-blue-50 text-blue-700 font-semibold px-3 py-1 rounded-full text-xs"></span>
+      </div>
+
+      <form id="bookingForm" onsubmit="submitForm(event)" class="space-y-8">
+        <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+          <h3 class="text-md font-bold text-slate-800 mb-4 border-b pb-2">1. Informasi Pelanggan</h3>
+          <div class="grid md:grid-cols-2 gap-5">
+            <div>
+              <label class="block text-sm font-semibold mb-1 text-slate-700">Nama Lengkap</label>
+              <input type="text" id="nama" required class="w-full p-3 border border-slate-300 rounded-xl outline-none bg-white">
+            </div>
+            <div>
+              <label class="block text-sm font-semibold mb-1 text-slate-700">No. WhatsApp / HP</label>
+              <input type="tel" id="phone" required class="w-full p-3 border border-slate-300 rounded-xl outline-none bg-white">
+            </div>
+          </div>
+          <div class="mt-4">
+            <label class="block text-sm font-semibold mb-1 text-slate-700">Alamat Lengkap</label>
+            <textarea id="alamat" rows="2" required class="w-full p-3 border border-slate-300 rounded-xl outline-none bg-white"></textarea>
+          </div>
+        </div>
+
+        <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+          <h3 class="text-md font-bold text-slate-800 mb-4 border-b pb-2">2. Pilih Layanan & Jadwal</h3>
+          <div class="mb-5">
+            <select id="layanan" onchange="loadAvailableSlots()" required class="w-full p-3 border border-slate-300 rounded-xl outline-none bg-white cursor-pointer">
+              <option value="" disabled selected>-- Pilih Layanan yang Dibutuhkan --</option>
+              <option value="Cuci AC Berkala (Rp 75.000)">🚿 Cuci AC Berkala - Rp 75.000</option>
+              <option value="Pengecekan Kerusakan (Mulai Rp 50.000)">🔍 Pengecekan Kerusakan - Mulai Rp 50.000</option>
+              <option value="Isi / Tambah Freon (Mulai Rp 150.000)">❄️ Isi / Tambah Freon - Mulai Rp 150.000</option>
+              <option value="Bongkar AC (Rp 100.000)">🔧 Bongkar AC - Rp 100.000</option>
+              <option value="Pasang AC (Rp 250.000)">⚙️ Pasang AC - Rp 250.000</option>
+              <option value="Bongkar Pasang AC (Rp 300.000)">🔄 Bongkar & Pasang AC - Rp 300.000</option>
+            </select>
+          </div>
+          <div class="grid md:grid-cols-2 gap-5">
+            <div>
+              <label class="block text-sm font-semibold mb-1 text-slate-700">Tanggal</label>
+              <input type="date" id="tanggal" onchange="loadAvailableSlots()" required class="w-full p-3 border border-slate-300 rounded-xl outline-none bg-white cursor-pointer">
+            </div>
+            <div>
+              <label class="block text-sm font-semibold mb-1 text-slate-700">Jam</label>
+              <select id="waktu" required class="w-full p-3 border border-slate-300 rounded-xl outline-none bg-white cursor-pointer">
+                <option value="">-- Pilih Tanggal Dulu --</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-blue-50/50 p-6 rounded-2xl border border-blue-100">
+          <h3 class="text-md font-bold text-slate-800 mb-2 border-b border-blue-200 pb-2">3. Upload Bukti Transfer (DP)</h3>
+          <p class="text-xs text-slate-500 mb-3">BCA: <b>1234-5678-90 a.n. Wijaya AC Solutions</b></p>
+          <input type="file" id="bukti" accept="image/*" required class="w-full bg-white p-2 border border-slate-300 rounded-xl">
+        </div>
+
+        <button type="submit" id="submitBtn" class="w-full bg-blue-600 text-white font-bold py-4 rounded-xl shadow-lg cursor-pointer">Kirim Pesanan Sekarang</button>
+      </form>
+    </div>
+
+    <div id="adminSection" class="hidden bg-white rounded-3xl shadow-2xl p-6 border border-slate-100 max-w-6xl mx-auto mt-10">
+      <div class="flex justify-between items-center mb-6 border-b pb-4">
+        <h2 class="text-2xl font-extrabold text-slate-800"><i class="fa-solid fa-user-tie text-blue-600 me-2"></i> Dashboard Admin</h2>
+        <button onclick="logout()" class="bg-red-50 text-red-600 px-4 py-2 rounded-lg text-sm font-bold cursor-pointer">Logout</button>
+      </div>
+      <div class="overflow-x-auto rounded-xl border border-slate-200">
+        <table class="w-full text-sm text-left border-collapse">
+          <thead class="bg-slate-100 text-slate-700 font-bold">
+            <tr><th class="p-4">ID</th><th class="p-4">Pelanggan</th><th class="p-4">Layanan</th><th class="p-4">Jadwal</th><th class="p-4">Bukti</th><th class="p-4">Ubah Status</th></tr>
+          </thead>
+          <tbody id="adminTableBody" class="divide-y divide-slate-100"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="userSection" class="hidden bg-white rounded-3xl shadow-2xl p-6 border border-slate-100 max-w-4xl mx-auto mt-10">
+      <div class="flex justify-between items-center mb-6 border-b pb-4">
+        <h2 class="text-2xl font-extrabold text-slate-800"><i class="fa-solid fa-clock-rotate-left text-blue-600 me-2"></i> Riwayat Pesanan</h2>
+        <div class="flex gap-2">
+          <button onclick="showBookingForm()" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold cursor-pointer">+ Pesan Baru</button>
+          <button onclick="logout()" class="bg-red-50 text-red-600 px-4 py-2 rounded-lg text-sm font-bold cursor-pointer">Logout</button>
+        </div>
+      </div>
+      <div class="overflow-x-auto rounded-xl border border-slate-200">
+        <table class="w-full text-sm text-left border-collapse">
+          <thead class="bg-slate-100 text-slate-700 font-bold">
+            <tr><th class="p-4">ID Pesanan</th><th class="p-4">Layanan</th><th class="p-4">Jadwal</th><th class="p-4">Status</th></tr>
+          </thead>
+          <tbody id="userTableBody" class="divide-y divide-slate-100"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <a href="https://wa.me/628123456789?text=Halo%20Wijaya%20AC%20Solutions,%20saya%20ingin%20bertanya%20seputar%20layanan" target="_blank" class="fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-2xl flex items-center justify-center transition duration-300 z-50 hover:scale-110">
+    <i class="fa-brands fa-whatsapp text-3xl"></i>
+  </a>
+
+  <div id="authModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-8 shadow-2xl relative fade-in">
+      <div class="flex border-b mb-6">
+        <button type="button" id="tabLoginBtn" onclick="switchAuthTab('login')" class="w-1/2 py-2 text-center font-bold text-blue-600 border-b-2 border-blue-600 cursor-pointer">Login</button>
+        <button type="button" id="tabRegBtn" onclick="switchAuthTab('register')" class="w-1/2 py-2 text-center font-bold text-slate-400 border-b-2 border-transparent cursor-pointer">Daftar Akun</button>
+      </div>
+
+      <div id="loginFormArea" class="space-y-4">
+        <div><label class="text-xs font-bold text-slate-600 uppercase">Username</label><input type="text" id="loginUser" class="w-full p-3 border border-slate-300 rounded-xl text-sm outline-none"></div>
+        <div><label class="text-xs font-bold text-slate-600 uppercase">Password</label><input type="password" id="loginPass" class="w-full p-3 border border-slate-300 rounded-xl text-sm outline-none"></div>
+        <button type="button" id="btnLogin" onclick="processLogin()" class="w-full bg-blue-600 text-white py-3 rounded-xl text-sm font-bold shadow-md cursor-pointer">Masuk</button>
+      </div>
+
+      <div id="regFormArea" class="hidden space-y-4">
+        <div><label class="text-xs font-bold text-slate-600 uppercase">Username Baru</label><input type="text" id="regUser" class="w-full p-3 border border-slate-300 rounded-xl text-sm outline-none"></div>
+        <div><label class="text-xs font-bold text-slate-600 uppercase">Password</label><input type="password" id="regPass" class="w-full p-3 border border-slate-300 rounded-xl text-sm outline-none"></div>
+        <button type="button" id="btnRegister" onclick="processRegister()" class="w-full bg-green-600 text-white py-3 rounded-xl text-sm font-bold shadow-md cursor-pointer">Buat Akun Sekarang</button>
+      </div>
+
+      <button type="button" onclick="toggleModal('authModal')" class="w-full bg-slate-100 text-slate-600 py-2.5 rounded-xl text-sm font-bold mt-4 cursor-pointer">Tutup</button>
+    </div>
+  </div>
+
+  <div id="customAlertModal" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 z-[100]">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-8 shadow-2xl relative text-center fade-in">
+      <div id="alertIcon" class="mb-4"></div>
+      <h3 id="alertTitle" class="text-2xl font-extrabold text-slate-800 mb-2"></h3>
+      <p id="alertMessage" class="text-slate-600 text-sm mb-6"></p>
+      <button type="button" onclick="closeAlert()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-bold shadow-md transition cursor-pointer">
+        Oke, Mengerti
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const availableSlots = ["08:00", "09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00"];
+    let loggedInUser = "Guest";
+
+    function showCustomAlert(title, message, isSuccess = true) {
+      document.getElementById('alertTitle').innerText = title;
+      document.getElementById('alertMessage').innerText = message;
+      document.getElementById('alertIcon').innerHTML = isSuccess 
+        ? '<i class="fa-solid fa-circle-check text-green-500 text-6xl"></i>' 
+        : '<i class="fa-solid fa-circle-xmark text-red-500 text-6xl"></i>';
+      document.getElementById('customAlertModal').classList.remove('hidden');
+    }
+    function closeAlert() { document.getElementById('customAlertModal').classList.add('hidden'); }
+
+    // AUTO REFRESH SILENT SETIAP 5 DETIK
+    setInterval(() => {
+      if (loggedInUser !== "Guest") {
+        if (!document.getElementById('adminSection').classList.contains('hidden')) {
+          loadAdminData(true);
+        } else if (!document.getElementById('userSection').classList.contains('hidden')) {
+          loadUserData(loggedInUser, true);
+        }
+      }
+    }, 5000);
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const tglInput = document.getElementById('tanggal');
+      if (tglInput) tglInput.min = new Date().toISOString().split('T')[0];
+    });
+
+    window.toggleModal = function(id) {
+      const modal = document.getElementById(id);
+      if (modal) modal.classList.toggle('hidden');
+    };
+
+    function switchAuthTab(type) {
+      if (type === 'login') {
+        document.getElementById('loginFormArea').classList.remove('hidden');
+        document.getElementById('regFormArea').classList.add('hidden');
+        document.getElementById('tabLoginBtn').className = "w-1/2 py-2 text-center font-bold text-blue-600 border-b-2 border-blue-600 cursor-pointer";
+        document.getElementById('tabRegBtn').className = "w-1/2 py-2 text-center font-bold text-slate-400 border-b-2 border-transparent cursor-pointer";
+      } else {
+        document.getElementById('loginFormArea').classList.add('hidden');
+        document.getElementById('regFormArea').classList.remove('hidden');
+        document.getElementById('tabRegBtn').className = "w-1/2 py-2 text-center font-bold text-blue-600 border-b-2 border-blue-600 cursor-pointer";
+        document.getElementById('tabLoginBtn').className = "w-1/2 py-2 text-center font-bold text-slate-400 border-b-2 border-transparent cursor-pointer";
+      }
+    }
+
+    function processRegister() {
+      const u = document.getElementById('regUser').value.trim();
+      const p = document.getElementById('regPass').value.trim();
+      if (!u || !p) return showCustomAlert("Peringatan", "Username dan Password wajib diisi!", false);
+
+      const btn = document.getElementById('btnRegister');
+      btn.innerText = "Mendaftarkan..."; btn.disabled = true;
+
+      google.script.run
+        .withSuccessHandler(res => {
+          btn.innerText = "Buat Akun Sekarang"; btn.disabled = false;
+          if (res.status === "success") {
+            showCustomAlert("Berhasil", res.message, true);
+            document.getElementById('regUser').value = ''; document.getElementById('regPass').value = '';
+            switchAuthTab('login');
+          } else showCustomAlert("Gagal", res.message, false);
+        })
+        .withFailureHandler(err => { showCustomAlert("Error", err.message, false); btn.disabled = false; })
+        .registerUser(u, p);
+    }
+
+    function processLogin() {
+      const u = document.getElementById('loginUser').value.trim();
+      const p = document.getElementById('loginPass').value.trim();
+      if (!u || !p) return showCustomAlert("Peringatan", "Isi username dan password!", false);
+
+      const btn = document.getElementById('btnLogin');
+      btn.innerText = "Memeriksa..."; btn.disabled = true;
+
+      google.script.run
+        .withSuccessHandler(res => {
+          btn.innerText = "Masuk"; btn.disabled = false;
+          if (res.status === "success") {
+            toggleModal('authModal');
+            loggedInUser = res.username;
+            document.getElementById('guestNotice').classList.add('hidden');
+            document.getElementById('navAuthArea').innerHTML = `
+              <span class="text-sm me-3 font-semibold text-white"><i class="fa-solid fa-user-circle"></i> ${res.username}</span>
+              <button onclick="logout()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-full text-xs font-bold cursor-pointer">Logout</button>
+            `;
+            if (res.role === "admin") {
+              document.getElementById('heroSection').classList.add('hidden');
+              document.getElementById('bookingSection').classList.add('hidden');
+              document.getElementById('userSection').classList.add('hidden');
+              document.getElementById('adminSection').classList.remove('hidden');
+              loadAdminData();
+            } else {
+              document.getElementById('userBadge').innerText = "Akun: " + res.username;
+              document.getElementById('bookingSection').classList.remove('hidden');
+              document.getElementById('adminSection').classList.add('hidden');
+              document.getElementById('userSection').classList.remove('hidden');
+              loadUserData(res.username);
+            }
+          } else showCustomAlert("Akses Ditolak", res.message, false);
+        })
+        .withFailureHandler(err => { showCustomAlert("Error", err.message, false); btn.disabled = false; })
+        .verifyLogin(u, p);
+    }
+
+    function loadAvailableSlots() {
+      const selectedDate = document.getElementById('tanggal').value;
+      const layananInput = document.getElementById('layanan').value.toLowerCase();
+      const selectWaktu = document.getElementById('waktu');
+      
+      if (!selectedDate) { selectWaktu.innerHTML = '<option value="">-- Pilih Tanggal Dulu --</option>'; return; }
+      selectWaktu.innerHTML = '<option value="">⏳ Memeriksa slot...</option>';
+      const isLayananBerat = layananInput.includes("bongkar") || layananInput.includes("pasang") || layananInput.includes("pengecekan");
+
+      google.script.run
+        .withSuccessHandler(booked => {
+          selectWaktu.innerHTML = '<option value="" disabled selected>-- Pilih Jam --</option>';
+          availableSlots.forEach(slot => {
+            let option = document.createElement('option');
+            let isConflict = booked.includes(slot); 
+
+            // Cek bentrok 2 jam ke depan jika pengguna memilih layanan berat
+            if (isLayananBerat && !isConflict) {
+              let jamAwal = parseInt(slot.split(":")[0], 10);
+              for (let j = 1; j <= 2; j++) {
+                let jamBerikut = jamAwal + j;
+                let jamBerikutStr = (jamBerikut < 10 ? "0" + jamBerikut : jamBerikut) + ":00";
+                if (booked.includes(jamBerikutStr)) isConflict = true;
+              }
+            }
+            if (isConflict) {
+              option.value = ""; option.disabled = true; option.textContent = `❌ ${slot} - [TIDAK TERSEDIA]`;
+            } else {
+              option.value = slot; option.textContent = `✅ ${slot} WIB`;
+            }
+            selectWaktu.appendChild(option);
+          });
+        })
+        .getBookedSlotsByDate(selectedDate);
+    }
+
+    function submitForm(e) {
+      e.preventDefault();
+      if (loggedInUser === "Guest") return showCustomAlert("Terkunci", "Anda harus login!", false);
+      const fileInput = document.getElementById('bukti').files[0];
+      const btn = document.getElementById('submitBtn');
+      btn.innerText = 'Mengirim Pesanan...'; btn.disabled = true;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        google.script.run
+          .withSuccessHandler(res => {
+            if(res.status === "success") {
+              showCustomAlert("Pesanan Berhasil!", "Tunggu teknisi kami datang.\nID Pesanan: " + res.id, true);
+              document.getElementById('bookingForm').reset();
+              loadAvailableSlots();
+              loadUserData(loggedInUser);
+            } else showCustomAlert("Gagal", res.message, false);
+            btn.innerText = 'Kirim Pesanan Sekarang'; btn.disabled = false;
+          })
+          .submitBooking({
+            nama: document.getElementById('nama').value, phone: document.getElementById('phone').value,
+            alamat: document.getElementById('alamat').value, layanan: document.getElementById('layanan').value,
+            tanggal: document.getElementById('tanggal').value, waktu: document.getElementById('waktu').value,
+            fileName: fileInput.name, mimeType: fileInput.type, fileData: evt.target.result.split(',')[1],
+            username: loggedInUser
+          });
+      };
+      reader.readAsDataURL(fileInput);
+    }
+
+    // UBAH STATUS OLEH ADMIN
+    function changeStatus(id, newStatus) {
+      google.script.run
+        .withSuccessHandler(res => {
+          if (res.status !== "success") showCustomAlert("Gagal", res.message, false);
+        })
+        .updateBookingStatus(id, newStatus);
+    }
+
+    function loadAdminData(isSilent = false) {
+      const tbody = document.getElementById('adminTableBody');
+      if (!isSilent) tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center">Memuat...</td></tr>';
+      
+      google.script.run
+        .withSuccessHandler(data => {
+          if(data.length === 0) {
+             tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-slate-500">Belum ada pesanan aktif.</td></tr>';
+             return;
+          }
+          let html = '';
+          data.forEach(b => {
+            let phoneVal = String(b.phone).replace(/^0/, ''); 
+            
+            let bgColor = "bg-yellow-50 text-yellow-800 border-yellow-200";
+            if(b.status === "Selesai") bgColor = "bg-green-50 text-green-800 border-green-200";
+            else if(b.status === "Dibatalkan") bgColor = "bg-red-50 text-red-800 border-red-200";
+            else if(b.status === "Proses Pengerjaan") bgColor = "bg-blue-50 text-blue-800 border-blue-200";
+
+            let selectHTML = `
+              <select onchange="changeStatus('${b.id}', this.value)" class="border rounded-lg px-2 py-1 text-xs font-bold outline-none cursor-pointer ${bgColor}">
+                <option value="Menunggu Konfirmasi" ${b.status === 'Menunggu Konfirmasi' ? 'selected' : ''}>Menunggu Konfirmasi</option>
+                <option value="Proses Pengerjaan" ${b.status === 'Proses Pengerjaan' ? 'selected' : ''}>Proses Pengerjaan</option>
+                <option value="Selesai" ${b.status === 'Selesai' ? 'selected' : ''}>Selesai</option>
+                <option value="Dibatalkan" ${b.status === 'Dibatalkan' ? 'selected' : ''}>Dibatalkan</option>
+              </select>
+            `;
+
+            html += `<tr class="border-b hover:bg-slate-50 transition"><td class="p-4 font-bold text-blue-800">${b.id}</td><td class="p-4">${b.nama}<br><a href="https://wa.me/62${phoneVal}" target="_blank" class="text-green-600 text-xs font-bold"><i class="fa-brands fa-whatsapp me-1"></i>${b.phone}</a></td><td class="p-4">${b.layanan}</td><td class="p-4">${b.tanggal}<br><b class="text-blue-700">${b.waktu} WIB</b></td><td class="p-4"><a href="${b.bukti}" target="_blank" class="text-blue-600 underline text-xs">Lihat Bukti</a></td><td class="p-4">${selectHTML}</td></tr>`;
+          });
+          tbody.innerHTML = html;
+        })
+        .getAllBookings();
+    }
+
+    function loadUserData(username, isSilent = false) {
+      const tbody = document.getElementById('userTableBody');
+      if (!isSilent) tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center">Memuat riwayat pesanan Anda...</td></tr>';
+      
+      google.script.run
+        .withSuccessHandler(data => {
+          if(data.length === 0) {
+             tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-slate-500">Anda belum memiliki riwayat pesanan.</td></tr>';
+             return;
+          }
+          let html = '';
+          data.forEach(b => {
+            let badgeClass = "bg-yellow-100 text-yellow-800";
+            if(b.status === "Selesai") badgeClass = "bg-green-100 text-green-800";
+            else if(b.status === "Dibatalkan") badgeClass = "bg-red-100 text-red-800";
+            else if(b.status === "Proses Pengerjaan") badgeClass = "bg-blue-100 text-blue-800";
+
+            html += `<tr class="border-b hover:bg-slate-50 transition"><td class="p-4 font-bold text-blue-800">${b.id}</td><td class="p-4">${b.layanan}</td><td class="p-4">${b.tanggal} <br><b class="text-blue-700">${b.waktu} WIB</b></td><td class="p-4"><span class="${badgeClass} px-3 py-1 rounded-full text-xs font-bold">${b.status}</span></td></tr>`;
+          });
+          tbody.innerHTML = html;
+        })
+        .getUserBookings(username);
+    }
+
+    function showBookingForm() { document.getElementById('bookingSection').classList.remove('hidden'); document.getElementById('bookingSection').scrollIntoView({ behavior: 'smooth' }); }
+    function logout() { location.reload(); }
+  </script>
+</body>
+</html>
