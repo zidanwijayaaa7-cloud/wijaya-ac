@@ -82,11 +82,11 @@
             <select id="layanan" onchange="loadAvailableSlots()" required class="w-full p-3 border border-slate-300 rounded-xl outline-none bg-white cursor-pointer">
               <option value="" disabled selected>-- Pilih Layanan yang Dibutuhkan --</option>
               <option value="Cuci AC Berkala (Rp 75.000)">🚿 Cuci AC Berkala - Rp 75.000</option>
-              <option value="Pengecekan Kerusakan (Mulai Rp 50.000)">🔍 Pengecekan Kerusakan - Mulai Rp 50.000</option>
+              <option value="Pengecekan Kerusakan (Rp 50.000)">🔍 Pengecekan Kerusakan - Rp 50.000 (Makan Waktu)</option>
               <option value="Isi / Tambah Freon (Mulai Rp 150.000)">❄️ Isi / Tambah Freon - Mulai Rp 150.000</option>
-              <option value="Bongkar AC (Rp 100.000)">🔧 Bongkar AC - Rp 100.000</option>
-              <option value="Pasang AC (Rp 250.000)">⚙️ Pasang AC - Rp 250.000</option>
-              <option value="Bongkar Pasang AC (Rp 300.000)">🔄 Bongkar & Pasang AC - Rp 300.000</option>
+              <option value="Bongkar AC (Rp 100.000)">🔧 Bongkar AC - Rp 100.000 (Makan Waktu)</option>
+              <option value="Pasang AC (Rp 250.000)">⚙️ Pasang AC - Rp 250.000 (Makan Waktu)</option>
+              <option value="Bongkar Pasang AC (Rp 300.000)">🔄 Bongkar & Pasang AC - Rp 300.000 (Makan Waktu)</option>
             </select>
           </div>
           <div class="grid md:grid-cols-2 gap-5">
@@ -186,6 +186,51 @@
   </div>
 
   <script>
+    // PASTEKAN URL WEB APP GOOGLE APPS SCRIPT ANDA DI SINI
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbxCSAAh4BW9Yi9U0Qfi0uwwHoiJCemzC4WY5bo4NKQ5XxeHq1CuYVYf9Vqdd6JHmP8p/exec";
+
+    // ADAPTER POLYFILL AGAR google.script.run BISA BERJALAN DI VERCEL
+    if (typeof google === "undefined" || !google.script || !google.script.run) {
+      window.google = {
+        script: {
+          run: {
+            withSuccessHandler: function(successCb) {
+              let failCb = function(err) { console.error("API Error:", err); };
+              const handler = {
+                withFailureHandler: function(fn) {
+                  failCb = fn;
+                  return handler;
+                }
+              };
+              return new Proxy(handler, {
+                get(target, prop) {
+                  if (prop === 'withFailureHandler') return target.withFailureHandler;
+                  return function(...args) {
+                    let payload = { action: prop };
+                    if (prop === "getBookedSlotsByDate") payload.targetDate = args[0];
+                    else if (prop === "registerUser") { payload.username = args[0]; payload.password = args[1]; }
+                    else if (prop === "verifyLogin") { payload.username = args[0]; payload.password = args[1]; }
+                    else if (prop === "submitBooking") payload.payload = args[0];
+                    else if (prop === "getAllBookings") {}
+                    else if (prop === "getUserBookings") payload.username = args[0];
+                    else if (prop === "updateBookingStatus") { payload.id = args[0]; payload.newStatus = args[1]; }
+
+                    fetch(GAS_URL, {
+                      method: "POST",
+                      body: JSON.stringify(payload)
+                    })
+                    .then(res => res.json())
+                    .then(data => { if (successCb) successCb(data); })
+                    .catch(err => { if (failCb) failCb(err); });
+                  };
+                }
+              });
+            }
+          }
+        }
+      };
+    }
+
     const availableSlots = ["08:00", "09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00"];
     let loggedInUser = "Guest";
 
@@ -309,7 +354,6 @@
             let option = document.createElement('option');
             let isConflict = booked.includes(slot); 
 
-            // Cek bentrok 2 jam ke depan jika pengguna memilih layanan berat
             if (isLayananBerat && !isConflict) {
               let jamAwal = parseInt(slot.split(":")[0], 10);
               for (let j = 1; j <= 2; j++) {
@@ -359,7 +403,6 @@
       reader.readAsDataURL(fileInput);
     }
 
-    // UBAH STATUS OLEH ADMIN
     function changeStatus(id, newStatus) {
       google.script.run
         .withSuccessHandler(res => {
