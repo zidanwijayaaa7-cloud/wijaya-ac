@@ -196,7 +196,7 @@
     // MASUKKAN URL WEB APP GOOGLE APPS SCRIPT ANDA DI BAWAH INI
     const GAS_URL = "https://script.google.com/macros/s/AKfycbx-3lxtZGqw4QLZFp3BcLuQ6d2Ih5wyYZ2PGLk31vpaaLmDR9FnGPqYCo3McF1C8NI/exec";
 
-    // ADAPTER POLYFILL MENGATASI CORS DAN REQUEST KE GOOGLE APPS SCRIPT
+   // ADAPTER POLYFIX YANG DIPERBAIKI AGAR RESPON JSON TERBACA SEMPURNA
     if (typeof google === "undefined" || !google.script || !google.script.run) {
       window.google = {
         script: {
@@ -231,20 +231,13 @@
 
             fetch(GAS_URL, {
               method: "POST",
-              mode: "no-cors", 
-              headers: { "Content-Type": "text/plain;charset=utf-8" },
               body: JSON.stringify(payload)
             })
-            .then(() => {
-              // Mode no-cors mengembalikan response kosong secara langsung, kita ambil ulang via GET atau bypass callback sukses
-              // Sebagai solusi data, kita tembak ulang lewat request GET reader JSON
-              return fetch(GAS_URL + "?action=" + prop);
-            })
             .then(res => res.json())
-            .then(data => { if (successCb) successCb(data); })
+            .then(data => {
+              if (successCb) successCb(data);
+            })
             .catch(err => {
-              // Fallback aman jika no-cors membatasi pembacaan respons langsung
-              if (successCb) successCb({ status: "success" });
               if (failCb) failCb(err);
             });
           };
