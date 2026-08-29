@@ -196,7 +196,7 @@
     // MASUKKAN URL WEB APP GOOGLE APPS SCRIPT ANDA DI SINI
     const GAS_URL = "https://script.google.com/macros/s/AKfycbx-3lxtZGqw4QLZFp3BcLuQ6d2Ih5wyYZ2PGLk31vpaaLmDR9FnGPqYCo3McF1C8NI/exec";
 
-    // ADAPTER POLYFILL ANTI-CORS VERCEL
+    // ADAPTER POLYFILL ANTI-CORS VERCEL (SUDAH DIPERBAIKI)
     if (typeof google === "undefined" || !google.script || !google.script.run) {
       window.google = {
         script: {
@@ -205,11 +205,7 @@
               return createProxy(successCb, function(err) { console.error("API Error:", err); });
             },
             withFailureHandler: function(failCb) {
-              return {
-                withSuccessHandler: function(successCb) {
-                  return createProxy(successCb, failCb);
-                }
-              };
+              return createProxy(null, failCb);
             }
           }
         }
@@ -219,6 +215,18 @@
     function createProxy(successCb, failCb) {
       return new Proxy({}, {
         get(target, prop) {
+          // Cegah fungsi chaining dikirim sebagai aksi ke backend
+          if (prop === 'withFailureHandler') {
+            return function(newFailCb) {
+              return createProxy(successCb, newFailCb);
+            };
+          }
+          if (prop === 'withSuccessHandler') {
+            return function(newSuccessCb) {
+              return createProxy(newSuccessCb, failCb);
+            };
+          }
+
           return function(...args) {
             let payload = { action: prop };
             
@@ -228,6 +236,7 @@
             else if (prop === "submitBooking") payload.payload = args[0];
             else if (prop === "getUserBookings") payload.username = args[0];
             else if (prop === "updateBookingStatus") { payload.id = args[0]; payload.newStatus = args[1]; }
+            else if (prop === "getAllBookings") {}
 
             fetch(GAS_URL, {
               method: "POST",
@@ -241,6 +250,8 @@
         }
       });
     }
+
+    // ... sisa kode seperti const availableSlots biarkan tetap seperti sebelumnya
 
     const availableSlots = ["08:00", "09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00"];
     let loggedInUser = "Guest";
